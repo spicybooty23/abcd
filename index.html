@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spicy Questionnaire</title>
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 500px;
+      padding: 2rem;
+      background: #1b1b1b;
+      border-radius: 20px;
+      box-shadow: 0 0 25px #e60073;
+      animation: fadeIn 1.5s ease-out;
+    }
+
+    .question {
+      margin-bottom: 1.5rem;
+      font-size: 1.3rem;
+    }
+
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .answer-btn {
+      background: #e60073;
+      border: none;
+      padding: 0.8rem 1.2rem;
+      font-size: 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      color: white;
+    }
+
+    .answer-btn:hover {
+      background: #ff4da6;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="quiz-container">
+    <!-- JS inserts questions here -->
+  </div>
+
+  <script>
+    const questions = [
+      {
+        id: 1,
+        text: "When did you first have sex?",
+        answers: [
+          { text: "Before 16", followUp: 2 },
+          { text: "16–18", followUp: 2 },
+          { text: "19+", followUp: 2 },
+          { text: "Still a virgin", followUp: 2 }
+        ]
+      },
+      {
+        id: 2,
+        text: "Was it enjoyable?",
+        answers: [
+          { text: "Absolutely", followUp: null },
+          { text: "Not really", followUp: null },
+          { text: "I regret it", followUp: null },
+          { text: "I want to redo it now 😏", followUp: null }
+        ]
+      }
+    ];
+
+    let currentQuestion = 1;
+
+    function renderQuestion(id) {
+      const container = document.getElementById('quiz-container');
+      const q = questions.find(q => q.id === id);
+
+      container.innerHTML = `
+        <div class="question">${q.text}</div>
+        <div class="answers">
+          ${q.answers.map(a =>
+            `<button class="answer-btn" onclick="handleAnswer(${a.followUp})">${a.text}</button>`
+          ).join('')}
+        </div>
+      `;
+    }
+
+    function handleAnswer(followUp) {
+      if (followUp) {
+        renderQuestion(followUp);
+      } else {
+        document.getElementById('quiz-container').innerHTML = `
+          <div class="question">Thank you, beautiful. More to come soon. 🔥</div>
+        `;
+      }
+    }
+
+    // Start the quiz
+    renderQuestion(currentQuestion);
+  </script>
+</body>
+</html>
