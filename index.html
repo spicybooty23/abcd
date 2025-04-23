@@ -5,59 +5,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spicy Questionnaire</title>
   <style>
-    body {
-      background: #111;
-      color: #fff;
-      font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      overflow: hidden;
-    }
+  body {
+    background: radial-gradient(circle at top left, #2c001e, #000);
+    color: #fff;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+  }
 
-    .container {
-      width: 90%;
-      max-width: 500px;
-      padding: 2rem;
-      background: #1b1b1b;
-      border-radius: 20px;
-      box-shadow: 0 0 25px #e60073;
-      animation: fadeIn 1.5s ease-out;
-    }
+  .container {
+    width: 90%;
+    max-width: 550px;
+    padding: 2rem;
+    background: rgba(27, 27, 27, 0.95);
+    border-radius: 25px;
+    box-shadow: 0 0 35px #ff1493aa;
+    animation: fadeIn 2s ease-out;
+    backdrop-filter: blur(6px);
+  }
 
-    .question {
-      margin-bottom: 1.5rem;
-      font-size: 1.3rem;
-    }
+  .question {
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+    line-height: 1.6;
+    animation: typewriter 2s steps(40) 1 normal both;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 2px solid #ff69b4;
+  }
 
-    .answers {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
+  .answers {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
 
-    .answer-btn {
-      background: #e60073;
-      border: none;
-      padding: 0.8rem 1.2rem;
-      font-size: 1rem;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-      color: white;
-    }
+  .answer-btn {
+    background: linear-gradient(to right, #ff0066, #ff3399);
+    border: none;
+    padding: 0.9rem 1.4rem;
+    font-size: 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    color: white;
+    box-shadow: 0 0 10px #ff3399aa;
+    transition: transform 0.2s, box-shadow 0.3s;
+  }
 
-    .answer-btn:hover {
-      background: #ff4da6;
-    }
+  .answer-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 18px #ff66cc;
+  }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes typewriter {
+    from { width: 0 }
+    to { width: 100% }
+  }
+</style>
 </head>
 <body>
   <div class="container" id="quiz-container">
@@ -66,53 +79,47 @@
 
   <script>
     const questions = [
-      {
-        id: 1,
-        text: "When did you first have sex?",
-        answers: [
-          { text: "Before 16", followUp: 2 },
-          { text: "16–18", followUp: 2 },
-          { text: "19+", followUp: 2 },
-          { text: "Still a virgin", followUp: 2 }
-        ]
-      },
-      {
-        id: 2,
-        text: "Was it enjoyable?",
-        answers: [
-          { text: "Absolutely", followUp: null },
-          { text: "Not really", followUp: null },
-          { text: "I regret it", followUp: null },
-          { text: "I want to redo it now 😏", followUp: null }
-        ]
-      }
-    ];
-
-    let currentQuestion = 1;
-
-    function renderQuestion(id) {
-      const container = document.getElementById('quiz-container');
-      const q = questions.find(q => q.id === id);
-
-      container.innerHTML = `
-        <div class="question">${q.text}</div>
-        <div class="answers">
-          ${q.answers.map(a =>
-            `<button class="answer-btn" onclick="handleAnswer(${a.followUp})">${a.text}</button>`
-          ).join('')}
-        </div>
-      `;
-    }
-
-    function handleAnswer(followUp) {
-      if (followUp) {
-        renderQuestion(followUp);
-      } else {
-        document.getElementById('quiz-container').innerHTML = `
-          <div class="question">Thank you, beautiful. More to come soon. 🔥</div>
-        `;
-      }
-    }
+  {
+    id: 1,
+    text: "When did you first have sex, and how would you describe the circumstances?",
+    answers: [
+      { text: "Very young, and it was impulsive", followUp: 2 },
+      { text: "Around 16, with someone older", followUp: 2 },
+      { text: "After 18, and it was planned", followUp: 2 },
+      { text: "Still waiting for the right moment", followUp: 3 }
+    ]
+  },
+  {
+    id: 2,
+    text: "Was it consensual and enjoyable?",
+    answers: [
+      { text: "Yes, and I felt powerful", followUp: 4 },
+      { text: "It was confusing and fast", followUp: 4 },
+      { text: "No, and I have mixed feelings", followUp: 4 },
+      { text: "Yes, but I wanted more", followUp: 4 }
+    ]
+  },
+  {
+    id: 3,
+    text: "What’s holding you back from doing it?",
+    answers: [
+      { text: "Religious values", followUp: 4 },
+      { text: "Haven’t met the right one", followUp: 4 },
+      { text: "Fear or trauma", followUp: 4 },
+      { text: "Still exploring myself", followUp: 4 }
+    ]
+  },
+  {
+    id: 4,
+    text: "Would you like to explore something new now?",
+    answers: [
+      { text: "Yes, something darker 🔥", followUp: null },
+      { text: "Yes, but slow and sensual 💫", followUp: null },
+      { text: "I want to be guided…", followUp: null },
+      { text: "Not yet, but I’m curious 👀", followUp: null }
+    ]
+  }
+];
 
     // Start the quiz
     renderQuestion(currentQuestion);
