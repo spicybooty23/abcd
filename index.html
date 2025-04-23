@@ -68,31 +68,63 @@
 </head>
 <body>
   <div class="container" id="quiz-container"></div>
-
   <script>
-    // Question trees
-    const q2Data = {
-      q2_1: { text: 'At that age (<14), which best describes your feeling?', answers: ['Pressured', 'Curious', 'Misled', 'Excited', 'Confused'] },
-      q2_2: { text: 'At 14–17, who was your partner?', answers: ['Friend', 'Older person', 'New crush', 'Casual fling', 'Stranger'] },
-      q2_3: { text: 'At 18–21, was it planned or spontaneous?', answers: ['Fully planned', 'Mostly planned', 'Spontaneous', 'Chance encounter', 'Don’t recall'] },
-      q2_4: { text: 'At 22–25, how did it make you feel afterwards?', answers: ['Empowered', 'Regretful', 'Indifferent', 'Joyful', 'Ashamed'] },
-      q2_5: { text: 'Above 25, what drove the decision?', answers: ['Curiosity', 'Love', 'Desire', 'Loneliness', 'Peer influence'] }
-    };
-    const q3Template = ['It changed me', 'I needed space', 'I felt alive', 'I felt ashamed', 'I would repeat'];
-
-    // State
-    let state = { stage: 'q1', age: null, branch: null, branchAnswer: null };
+    const state = { stage: 'q1', age: 18, branch: null };
     const container = document.getElementById('quiz-container');
 
-    // Render dispatcher
+    const q2Data = {
+      q2_1: {
+        text: 'At that age (<14), which best describes how you felt?',
+        answers: ['Pressured', 'Curious', 'Misled', 'Excited', 'Confused']
+      },
+      q2_2: {
+        text: 'At 14–17, who was your first partner?',
+        answers: ['Friend', 'Older person', 'New crush', 'Casual fling', 'Stranger']
+      },
+      q2_3: {
+        text: 'At 18–21, was it planned or spontaneous?',
+        answers: ['Fully planned', 'Mostly planned', 'Spontaneous', 'Chance encounter', 'Don’t recall']
+      },
+      q2_4: {
+        text: 'At 22–25, how did it make you feel afterwards?',
+        answers: ['Empowered', 'Regretful', 'Indifferent', 'Joyful', 'Ashamed']
+      },
+      q2_5: {
+        text: 'Above 25, what drove that decision?',
+        answers: ['Curiosity', 'Love', 'Desire', 'Loneliness', 'Peer influence']
+      }
+    };
+
+    const q3Data = {
+      q2_1: {
+        text: 'Which sensation stayed with you the most?',
+        answers: ['Regret', 'Confusion', 'Curiosity', 'Shame', 'Excitement']
+      },
+      q2_2: {
+        text: 'How would you describe the dynamic with that partner?',
+        answers: ['Comfortable', 'Exciting', 'Awkward', 'Empowering', 'Confusing']
+      },
+      q2_3: {
+        text: 'Did it meet your expectations emotionally?',
+        answers: ['Exceeded', 'Met', 'Fell short', 'Mixed', 'Neutral']
+      },
+      q2_4: {
+        text: 'Did it change how you view intimacy?',
+        answers: ['Yes, greatly', 'Somewhat', 'Not really', 'Negatively', 'Positively']
+      },
+      q2_5: {
+        text: 'Do you feel satisfied with that decision?',
+        answers: ['Absolutely', 'Somewhat', 'Not fully', 'Regret it', 'Still curious']
+      }
+    };
+
     function render() {
       if (state.stage === 'q1') return renderQ1();
-      if (state.stage.startsWith('q2_')) return renderQ2(state.stage);
-      if (state.stage.startsWith('q3_')) return renderQ3();
-      container.innerHTML = `<div class="question">Thank you for your honesty, Emilyanes’a 💋</div>`;
+      if (state.stage === 'q2') return renderQ2();
+      if (state.stage === 'q3') return renderQ3();
+      container.innerHTML = '<div class="question">Thank you for your honesty, Emilyanes’a 💋</div>';
     }
 
-    // Q1: Age slider
     function renderQ1() {
       container.innerHTML = `
         <div class="question">At what age did you first have sex?</div>
@@ -110,43 +142,40 @@
     }
 
     function submitAge() {
-      const age = state.age || 18;
+      const age = state.age;
       let key;
       if (age < 14) key = 'q2_1';
       else if (age <= 17) key = 'q2_2';
       else if (age <= 21) key = 'q2_3';
       else if (age <= 25) key = 'q2_4';
       else key = 'q2_5';
-      state.stage = key;
       state.branch = key;
+      state.stage = 'q2';
       render();
     }
 
-    // Q2: category-specific MCQ
-    function renderQ2(key) {
-      const q = q2Data[key];
+    function renderQ2() {
+      const q = q2Data[state.branch];
       container.innerHTML = `
         <div class="question">${q.text}</div>
         <div class="answers">
-          ${q.answers.map((a,i) => `<button class="answer-btn" onclick="chooseQ2(${i})">${a}</button>`).join('')}
+          ${q.answers.map((a, i) => `<button class="answer-btn" onclick="chooseQ2(${i})">${a}</button>`).join('')}
         </div>
       `;
     }
 
     function chooseQ2(index) {
-      state.branchAnswer = q2Data[state.branch].answers[index];
-      state.stage = `q3`;
-      state.subIndex = index;
+      state.choiceIndex = index;
+      state.stage = 'q3';
       render();
     }
 
-    // Q3: follow-up based on Q2 choice
     function renderQ3() {
-      const text = `You chose “${state.branchAnswer}”. How did that choice influence you?`;
+      const q = q3Data[state.branch];
       container.innerHTML = `
-        <div class="question">${text}</div>
+        <div class="question">${q.text}</div>
         <div class="answers">
-          ${q3Template.map((a,i) => `<button class="answer-btn" onclick="finish()">${a}</button>`).join('')}
+          ${q.answers.map(a => `<button class="answer-btn" onclick="finish()">${a}</button>`).join('')}
         </div>
       `;
     }
@@ -156,7 +185,7 @@
       render();
     }
 
-    // Start
+    // Start quiz
     state.age = 18;
     render();
   </script>
