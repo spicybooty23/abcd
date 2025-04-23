@@ -66,96 +66,96 @@
 <body>
   <div class="container">
     <form id="spicy-form">
-      <!-- 1. Age at first intercourse -->
-      <p>At what age did you first have sexual intercourse?</p>
+      <!-- 1. Age at first surrender -->
+      <p>How old were you when you first surrendered to his touch?</p>
       <div class="input-block">
         <input type="range" id="ageFirst" name="ageFirst" min="14" max="60" value="18"
-               oninput="ageFirstLabel.textContent = this.value + ' years'">
-        <span id="ageFirstLabel" class="range-label">18 years</span>
+               oninput="ageFirstLabel.textContent = this.value + ' years of passion'">
+        <span id="ageFirstLabel" class="range-label">18 years of passion</span>
       </div>
 
-      <!-- 2. Partner’s age -->
-      <p>How old was your partner at that time?</p>
+      <!-- 2. His age -->
+      <p>How old was he when he first claimed your warmth?</p>
       <div class="input-block">
         <input type="range" id="agePartner" name="agePartner" min="14" max="60" value="18"
-               oninput="agePartnerLabel.textContent = this.value + ' years'">
-        <span id="agePartnerLabel" class="range-label">18 years</span>
+               oninput="agePartnerLabel.textContent = this.value + ' years old'">
+        <span id="agePartnerLabel" class="range-label">18 years old</span>
       </div>
 
-      <!-- 3. Relationship -->
-      <p>What was your relationship to that person?</p>
+      <!-- 3. His role in your story -->
+      <p>Who was he in your life when he ignited your fire?</p>
       <select id="relation" name="relation">
-        <option>Close friend</option>
-        <option>Older partner</option>
-        <option>Crush</option>
-        <option>Casual fling</option>
-        <option>Stranger</option>
+        <option>A trusted friend</option>
+        <option>A daring stranger</option>
+        <option>Your secret crush</option>
+        <option>A playful fling</option>
+        <option>Someone you barely knew</option>
       </select>
 
-      <!-- 4. Romantic relationship? -->
-      <p>Were you in a romantic relationship with them?</p>
+      <!-- 4. Bond of desire? -->
+      <p>Were you entwined in a romantic bond, or was it pure desire?</p>
       <div class="answers">
-        <label><input type="radio" name="inRelation" value="yes"> Yes</label>
-        <label><input type="radio" name="inRelation" value="no"> No</label>
+        <label><input type="radio" name="inRelation" value="yes"> Entwined in romance</label>
+        <label><input type="radio" name="inRelation" value="no"> Driven by desire</label>
       </div>
 
-      <!-- 5. Time from decision to act -->
-      <p>How much time passed between deciding and intercourse?</p>
+      <!-- 5. Countdown to passion -->
+      <p>How long did you crave him before you gave in?</p>
       <div class="input-block">
         <input type="range" id="timeToAct" name="timeToAct" min="0" max="720" value="24"
-               oninput="timeToActLabel.textContent = this.value + ' hours'">
-        <span id="timeToActLabel" class="range-label">24 hours</span>
+               oninput="timeToActLabel.textContent = this.value + ' hours of longing'">
+        <span id="timeToActLabel" class="range-label">24 hours of longing</span>
       </div>
 
-      <!-- 6. Choice vs pressure -->
-      <p>Was it entirely your choice, pressured, or both?</p>
+      <!-- 6. Your will vs his will -->
+      <p>Was it your fierce will, his sweet persuasion, or a thrilling mix?</p>
       <select id="pressure" name="pressure">
-        <option>Entirely my choice</option>
-        <option>Some pressure</option>
-        <option>Mixed</option>
+        <option>Your fierce will</option>
+        <option>His sweet persuasion</option>
+        <option>A thrilling mix of both</option>
       </select>
 
-      <!-- 7. Satisfied? -->
-      <p>Did you find the experience satisfying?</p>
+      <!-- 7. Pleasure unlocked? -->
+      <p>Did his performance unlock waves of pleasure within you?</p>
       <div class="answers">
-        <label><input type="radio" name="satisfied" value="yes" onchange="toggle7_1()"> Yes</label>
-        <label><input type="radio" name="satisfied" value="no" onchange="toggle7_1()"> No</label>
+        <label><input type="radio" name="satisfied" value="yes" onchange="toggle7_1()"> Yes, ablaze with ecstasy</label>
+        <label><input type="radio" name="satisfied" value="no" onchange="toggle7_1()"> No, still yearning</label>
       </div>
 
-      <!-- 7.1 If No: factors -->
+      <!-- 7.1 If No: cause of yearning -->
       <div id="q7_1" class="hidden">
-        <p>If no, what caused dissatisfaction? (select all that apply)</p>
-        <label><input type="checkbox" name="cause" value="technique"> Technique</label>
-        <label><input type="checkbox" name="cause" value="size" onchange="toggleSize()"> Size</label>
-        <label><input type="checkbox" name="cause" value="noRomance"> No romantic connection</label>
+        <p>If you’re still yearning, what stoked the fire of desire?</p>
+        <label><input type="checkbox" name="cause" value="technique"> His technique</label>
+        <label><input type="checkbox" name="cause" value="size" onchange="toggleSize()"> His size</label>
+        <label><input type="checkbox" name="cause" value="noRomance"> Lack of romance</label>
         <label><input type="checkbox" name="cause" value="other"> Other</label>
 
-        <!-- 7.1.1 If Size: size slider -->
+        <!-- 7.1.1 Size slider -->
         <div id="sizeScale" class="hidden" style="margin-left:1rem;">
-          <p>Rate size</p>
+          <p>Rate his size</p>
           <input type="range" id="sizeRating" name="sizeRating" min="1" max="10" value="5"
-                 oninput="sizeLabel.textContent = this.value">
-          <span id="sizeLabel" class="range-label">5</span>
+                 oninput="sizeLabel.textContent = this.value + '/10'">
+          <span id="sizeLabel" class="range-label">5/10</span>
         </div>
       </div>
 
-      <!-- 8. Mutual satisfaction? -->
-      <p>Was it satisfying for both partners?</p>
+      <!-- 8. Shared ecstasy? -->
+      <p>Did he bask in your delight as much as you did in his?</p>
       <div class="answers">
-        <label><input type="radio" name="mutual" value="yes" onchange="toggle8_1()"> Yes</label>
-        <label><input type="radio" name="mutual" value="no" onchange="toggle8_1()"> No</label>
+        <label><input type="radio" name="mutual" value="yes" onchange="toggle8_1()"> Yes, we soared together</label>
+        <label><input type="radio" name="mutual" value="no" onchange="toggle8_1()"> No, it was one-sided</label>
       </div>
 
-      <!-- 8.1 If No: partner’s issue -->
+      <!-- 8.1 If No: his hidden desire -->
       <div id="q8_1" class="hidden">
-        <p>If no, what was the partner’s issue? (select all that apply)</p>
+        <p>If you soared alone, what tempered his passion?</p>
         <label><input type="checkbox" name="partnerCause" value="technique"> Your technique</label>
-        <label><input type="checkbox" name="partnerCause" value="body" onchange="toggleBodyPart()"> Their body</label>
+        <label><input type="checkbox" name="partnerCause" value="body" onchange="toggleBodyPart()"> Your body</label>
         <label><input type="checkbox" name="partnerCause" value="other"> Other</label>
 
-        <!-- 8.1.1 If Body: body part multi-select -->
+        <!-- 8.1.1 Body part multi-select -->
         <div id="bodyPart" class="hidden" style="margin-left:1rem;">
-          <p>Which body part?</p>
+          <p>Which part of you left him wanting?</p>
           <label><input type="checkbox" name="bodyPart" value="breasts"> Breasts</label>
           <label><input type="checkbox" name="bodyPart" value="buttocks"> Buttocks</label>
           <label><input type="checkbox" name="bodyPart" value="legs"> Legs</label>
@@ -164,7 +164,7 @@
         </div>
       </div>
 
-      <button type="submit" class="answer-btn">Submit</button>
+      <button type="submit" class="answer-btn">Unleash & Submit</button>
     </form>
   </div>
 
