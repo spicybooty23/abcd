@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Spicy Confession Scale</title>
   <style>
-    /* Body & Background */
     body {
       background: radial-gradient(circle at top left, #2c001e, #000);
       color: #fff;
@@ -16,44 +15,34 @@
       height: 100vh;
       margin: 0;
     }
-
-    /* Container styling */
     .container {
       width: 90%;
       max-width: 600px;
       padding: 2rem;
-      background: rgba(27, 27, 27, 0.95);
+      background: rgba(27,27,27,0.95);
       border-radius: 25px;
       box-shadow: 0 0 35px #ff1493aa;
       backdrop-filter: blur(6px);
       overflow-y: auto;
       max-height: 90vh;
     }
-
-    /* Question text */
     .question {
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       font-size: 1.4rem;
-      animation: fadeIn 1s ease-out;
+      animation: fadeIn 0.8s ease-out;
     }
-
-    /* Inputs & Buttons container */
     .answers, .input-block {
       display: flex;
       flex-direction: column;
       gap: 1rem;
     }
-
-    /* Buttons & Range slider styling */
     button, input[type=range] {
       font-size: 1rem;
       border-radius: 12px;
       border: none;
       outline: none;
-      padding: 0.9rem 1.4rem;
+      padding: 0.9rem;
     }
-
-    /* Answer buttons */
     .answer-btn {
       background: linear-gradient(to right, #ff0066, #ff3399);
       color: white;
@@ -66,188 +55,110 @@
       box-shadow: 0 0 18px #ff66cc;
       transform: scale(1.05);
     }
-
-    /* Range label */
     .range-label {
-      margin-top: 0.5rem;
       text-align: center;
-      font-size: 1.1rem;
+      font-size: 1.2rem;
+      color: #ff66cc;
     }
-
-    /* Fade-in animation */
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
+      from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <div class="container" id="quiz-container">
-    <!-- Initial slider question -->
-    <div class="question">At what age did you first have sex?</div>
-    <div class="input-block">
-      <input
-        type="range"
-        id="age-slider"
-        min="10"
-        max="40"
-        value="18"
-        oninput="updateLabel(this.value)"
-      >
-      <div class="range-label" id="range-label">18 years</div>
-    </div>
-    <button class="answer-btn" onclick="submitAge()">Continue</button>
-  </div>
+  <div class="container" id="quiz-container"></div>
 
   <script>
-    // Track user-selected age
-    let userAge = 18;
+    // Question trees
+    const q2Data = {
+      q2_1: { text: 'At that age (<14), which best describes your feeling?', answers: ['Pressured', 'Curious', 'Misled', 'Excited', 'Confused'] },
+      q2_2: { text: 'At 14–17, who was your partner?', answers: ['Friend', 'Older person', 'New crush', 'Casual fling', 'Stranger'] },
+      q2_3: { text: 'At 18–21, was it planned or spontaneous?', answers: ['Fully planned', 'Mostly planned', 'Spontaneous', 'Chance encounter', 'Don’t recall'] },
+      q2_4: { text: 'At 22–25, how did it make you feel afterwards?', answers: ['Empowered', 'Regretful', 'Indifferent', 'Joyful', 'Ashamed'] },
+      q2_5: { text: 'Above 25, what drove the decision?', answers: ['Curiosity', 'Love', 'Desire', 'Loneliness', 'Peer influence'] }
+    };
+    const q3Template = ['It changed me', 'I needed space', 'I felt alive', 'I felt ashamed', 'I would repeat'];
 
-    // Container element
+    // State
+    let state = { stage: 'q1', age: null, branch: null, branchAnswer: null };
     const container = document.getElementById('quiz-container');
 
-    // Array of all follow-up questions
-    const questions = [];
+    // Render dispatcher
+    function render() {
+      if (state.stage === 'q1') return renderQ1();
+      if (state.stage.startsWith('q2_')) return renderQ2(state.stage);
+      if (state.stage.startsWith('q3_')) return renderQ3();
+      container.innerHTML = `<div class="question">Thank you for your honesty, Emilyanes’a 💋</div>`;
+    }
 
-    // Current index in questions array
-    let currentIndex = 0;
+    // Q1: Age slider
+    function renderQ1() {
+      container.innerHTML = `
+        <div class="question">At what age did you first have sex?</div>
+        <div class="input-block">
+          <input type="range" id="age-slider" min="10" max="60" value="18" oninput="updateAge(this.value)">
+          <div class="range-label" id="range-label">18 years</div>
+        </div>
+        <button class="answer-btn" onclick="submitAge()">Submit Age</button>
+      `;
+    }
 
-    /**
-     * Update the displayed age label when slider moves
-     */
-    function updateLabel(val) {
-      userAge = parseInt(val);
+    function updateAge(val) {
+      state.age = parseInt(val);
       document.getElementById('range-label').innerText = val + ' years';
     }
 
-    /**
-     * Initialize questions based on the age bracket selected
-     */
     function submitAge() {
-      // Clear any existing questions
-      questions.length = 0;
-
-      // Conditional follow-ups for age <14
-      if (userAge < 14) {
-        questions.push(
-          { q: 'Did someone influence or pressure you at that age?', options: ['Yes', 'No', "I'm not sure"] },
-          { q: 'Do you consider it a positive experience in retrospect?', options: ['Yes', 'No', 'Mixed feelings'] },
-          { q: 'Do you feel you were emotionally ready?', options: ['Yes', 'No'] }
-        );
-      }
-      // Conditional for age 14-17
-      else if (userAge <= 17) {
-        questions.push(
-          { q: 'Was your first partner close to your age?', options: ['Yes', 'No'] },
-          { q: 'Did you feel peer pressure or curiosity?', options: ['Peer pressure', 'Curiosity', 'Both'] },
-          { q: 'Would you do it differently now?', options: ['Yes', 'No'] }
-        );
-      }
-      // Conditional for age 18-21
-      else if (userAge <= 21) {
-        questions.push(
-          { q: 'Was it a planned experience?', options: ['Yes', 'No'] },
-          { q: 'Did you trust that person?', options: ['Absolutely', 'Not really'] },
-          { q: 'Was it driven by love or desire?', options: ['Love', 'Desire', 'Both'] }
-        );
-      }
-      // Conditional for age >21
-      else {
-        questions.push(
-          { q: 'What motivated you most?', options: ['Curiosity', 'Desire', 'Relationship'] },
-          { q: 'Do you look back fondly or indifferently?', options: ['Fondly', 'Indifferently'] },
-          { q: 'Would you classify it as memorable or forgettable?', options: ['Memorable', 'Forgettable'] }
-        );
-      }
-
-      // Add additional general spicy questions to reach 50
-      questions.push(
-        { q: 'Have you ever faked an orgasm?', options: ['Yes', 'No'] },
-        { q: 'Do you enjoy being dominated?', options: ['Yes', 'No'] },
-        { q: 'Have you explored adult toys?', options: ['Yes', 'No'] },
-        { q: 'Do you talk dirty during sex?', options: ['Yes', 'No'] },
-        { q: 'Have you had sex outdoors?', options: ['Yes', 'No'] },
-        { q: 'Do you get aroused by exhibitionism?', options: ['Yes', 'No'] },
-        { q: 'Have you ever been tied up?', options: ['Yes', 'No'] },
-        { q: 'Do you enjoy giving or receiving spankings?', options: ['Giving', 'Receiving', 'Both', 'Neither'] },
-        { q: 'Have you experienced a threesome or group sex?', options: ['Yes', 'No'] },
-        { q: 'Would you try public sex?', options: ['Yes', 'No'] },
-        { q: 'Do you fantasize about multiple partners?', options: ['Yes', 'No'] },
-        { q: 'Have you sent nude photos?', options: ['Yes', 'No'] },
-        { q: 'Do you have a secret fetish?', options: ['Yes', 'No'] },
-        { q: 'Would you obey any command in bed?', options: ['Yes', 'No'] },
-        { q: 'Do you moan loudly or softly?', options: ['Loudly', 'Softly'] },
-        { q: 'Do you ever fantasize during work or school?', options: ['Yes', 'No'] },
-        { q: 'Do you participate in roleplay?', options: ['Yes', 'No'] },
-        { q: 'Have you recorded yourself?', options: ['Yes', 'No'] },
-        { q: 'Do you own sexy lingerie?', options: ['Yes', 'No'] },
-        { q: 'Would you submit to a stranger?', options: ['Yes', 'No'] },
-        { q: 'Do you crave safe degradation?', options: ['Yes', 'No'] },
-        { q: 'Have you watched extreme porn?', options: ['Yes', 'No'] },
-        { q: 'Would you try anal play?', options: ['Yes', 'No'] },
-        { q: 'Do you seek to be worshipped?', options: ['Yes', 'No'] },
-        { q: 'Do you fantasize about forbidden relationships?', options: ['Yes', 'No'] },
-        { q: 'Have you attended a swinger party?', options: ['Yes', 'No'] },
-        { q: 'Do you use temperature play (ice/candles)?', options: ['Yes', 'No'] },
-        { q: 'Would you roleplay a dominant character?', options: ['Yes', 'No'] },
-        { q: 'Do you enjoy sensory deprivation?', options: ['Yes', 'No'] },
-        { q: 'Have you explored bondage? ', options: ['Yes', 'No'] },
-        { q: 'Do you fantasize about power exchange?', options: ['Yes', 'No'] },
-        { q: 'Have you read erotica?', options: ['Yes', 'No'] },
-        { q: 'Do you prefer rough or gentle?', options: ['Rough', 'Gentle'] },
-        { q: 'Do you seduce with words or actions?', options: ['Words', 'Actions'] },
-        { q: 'Have you used blindfolds?', options: ['Yes', 'No'] },
-        { q: 'Do you enjoy licking or being licked?', options: ['Licking', 'Being licked'] },
-        { q: 'Have you tried light choking?', options: ['Yes', 'No'] },
-        { q: 'Do you want someone to worship your body?', options: ['Yes', 'No'] },
-        { q: 'Would you try temperature play?', options: ['Yes', 'No'] },
-        { q: 'Have you fantasized about same-sex encounters?', options: ['Yes', 'No'] },
-        { q: 'Do you like whispered talk or loud talk?', options: ['Whispered', 'Loud'] },
-        { q: 'Have you used edible body products?', options: ['Yes', 'No'] },
-        { q: 'Do you enjoy role reversal?', options: ['Yes', 'No'] },
-        { q: 'Have you tried sensory overload?', options: ['Yes', 'No'] },
-        { q: 'Do you enjoy teasing before touch?', options: ['Yes', 'No'] },
-        { q: 'Would you engage in cybersex?', options: ['Yes', 'No'] }
-      );
-
-      // Start rendering questions
-      renderQuestion();
+      const age = state.age || 18;
+      let key;
+      if (age < 14) key = 'q2_1';
+      else if (age <= 17) key = 'q2_2';
+      else if (age <= 21) key = 'q2_3';
+      else if (age <= 25) key = 'q2_4';
+      else key = 'q2_5';
+      state.stage = key;
+      state.branch = key;
+      render();
     }
 
-    /**
-     * Render the current question based on index
-     */
-    function renderQuestion() {
-      // If all questions answered, show final message
-      if (currentIndex >= questions.length) {
-        container.innerHTML = `
-          <div class="question">Thank you for confessing, Emilyanes’a 💋</div>
-        `;
-        return;
-      }
-
-      // Get current question
-      const q = questions[currentIndex];
-
-      // Build HTML
-      let html = `<div class="question">${q.q}</div>`;
-      html += `<div class="answers">`;
-      q.options.forEach(opt => {
-        html += `<button class="answer-btn" onclick="nextQuestion()">${opt}</button>`;
-      });
-      html += `</div>`;
-
-      // Render
-      container.innerHTML = html;
+    // Q2: category-specific MCQ
+    function renderQ2(key) {
+      const q = q2Data[key];
+      container.innerHTML = `
+        <div class="question">${q.text}</div>
+        <div class="answers">
+          ${q.answers.map((a,i) => `<button class="answer-btn" onclick="chooseQ2(${i})">${a}</button>`).join('')}
+        </div>
+      `;
     }
 
-    /**
-     * Move to next question
-     */
-    function nextQuestion() {
-      currentIndex++;
-      renderQuestion();
+    function chooseQ2(index) {
+      state.branchAnswer = q2Data[state.branch].answers[index];
+      state.stage = `q3`;
+      state.subIndex = index;
+      render();
     }
+
+    // Q3: follow-up based on Q2 choice
+    function renderQ3() {
+      const text = `You chose “${state.branchAnswer}”. How did that choice influence you?`;
+      container.innerHTML = `
+        <div class="question">${text}</div>
+        <div class="answers">
+          ${q3Template.map((a,i) => `<button class="answer-btn" onclick="finish()">${a}</button>`).join('')}
+        </div>
+      `;
+    }
+
+    function finish() {
+      state.stage = 'end';
+      render();
+    }
+
+    // Start
+    state.age = 18;
+    render();
   </script>
 </body>
 </html>
