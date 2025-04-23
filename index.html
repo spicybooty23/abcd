@@ -1,156 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Spicy Confession Logic</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legal Age: Spicy Confession</title>
   <style>
-    body { background: radial-gradient(circle at top left, #2c001e, #000); color: #fff; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-    .container { width: 90%; max-width: 600px; padding: 2rem; background: rgba(27,27,27,0.95); border-radius: 25px; box-shadow: 0 0 35px #ff1493aa; backdrop-filter: blur(6px); overflow-y: auto; max-height: 95vh; }
-    .question { margin-bottom: 1.5rem; font-size: 1.4rem; }
-    .answers, .input-block { display: flex; flex-direction: column; gap: 1rem; }
-    button, input[type=range] { font-size: 1rem; border-radius: 12px; border: none; padding: 0.9rem; }
-    .answer-btn { background: linear-gradient(to right, #ff0066, #ff3399); color: #fff; cursor: pointer; box-shadow: 0 0 10px #ff3399aa; transition: 0.3s ease; }
-    .answer-btn:hover { transform: scale(1.05); box-shadow: 0 0 18px #ff66cc; }
-    .range-label { text-align: center; font-size: 1.2rem; color: #ff66cc; }
+    body {
+      background: radial-gradient(circle at top left, #2c001e, #000);
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      width: 90%;
+      max-width: 600px;
+      padding: 2rem;
+      background: rgba(27, 27, 27, 0.95);
+      border-radius: 25px;
+      box-shadow: 0 0 35px #ff1493aa;
+      backdrop-filter: blur(6px);
+      overflow-y: auto;
+      max-height: 95vh;
+    }
+    .question {
+      margin-bottom: 1.5rem;
+      font-size: 1.4rem;
+    }
+    .answers, .input-block {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    button, input[type=range] {
+      font-size: 1rem;
+      border-radius: 12px;
+      border: none;
+      padding: 0.9rem;
+    }
+    .answer-btn {
+      background: linear-gradient(to right, #ff0066, #ff3399);
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 0 10px #ff3399aa;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .answer-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 18px #ff66cc;
+    }
+    .range-label {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #ff66cc;
+    }
   </style>
 </head>
 <body>
   <div class="container" id="quiz-container"></div>
   <script>
-    const container = document.getElementById('quiz-container');
     const state = { stage: 'q1', age: 18, branch: null, choiceIndex: null };
+    const container = document.getElementById('quiz-container');
 
-    // Level 2 questions based on age bracket
+    // Q2 categories for legal age (>14)
     const q2Data = {
-      q2_1: {
-        text: 'Under 14: Which best describes how you felt?',
-        answers: ['Scared', 'Curious', 'Pressured', 'Indifferent', 'Ashamed']
-      },
-      q2_2: {
+      q2_14_17: {
         text: 'Ages 14–17: Who was your first partner?',
-        answers: ['Close friend', 'Older partner', 'Crush', 'Casual fling', 'Stranger']
+        answers: ['Close friend', 'Older partner', 'New crush', 'Casual fling', 'Stranger']
       },
-      q2_3: {
+      q2_18_21: {
         text: 'Ages 18–21: Was it planned or spontaneous?',
-        answers: ['Meticulously planned', 'Planned conversation', 'Spontaneous', 'Chance moment', 'Don’t recall']
+        answers: ['Fully planned', 'Mostly planned', 'Spontaneous', 'Chance encounter', 'Don’t recall']
       },
-      q2_4: {
-        text: 'Ages 22–25: How did it affect your view on intimacy?',
-        answers: ['Deepened trust', 'Left doubts', 'Purely physical', 'Eye-opener', 'No change']
+      q2_22_25: {
+        text: 'Ages 22–25: How did it shape your intimacy views?',
+        answers: ['Deepened trust', 'Raised doubts', 'Mostly physical', 'Eye-opener', 'No change']
       },
-      q2_5: {
-        text: 'Above 25: Why did you wait until then?',
-        answers: ['Waiting for love', 'Personal goals', 'Cultural reasons', 'Fear', 'Other']
+      q2_above25: {
+        text: 'Above 25: What motivated the timing?',
+        answers: ['Curiosity', 'Love', 'Career focus', 'Cultural reasons', 'Other']
       }
     };
 
-    // Level 3 follow-ups per branch and answer index
+    // Q3 follow-ups for each branch answer index
     const q3Data = {
-      // q2_1 responses
-      'q2_1_0': {
-        text: 'What about the experience made you feel scared?',
-        answers: ['Fear of consequences', 'Fear of pain', 'Fear of judgment', 'Fear of the unknown', 'Other fears']
+      'q2_14_17_0': {
+        text: 'With a close friend, did boundaries feel clear?',
+        answers: ['Yes, clear', 'Some confusion', 'Blurred lines', 'Complicated', 'Other']
       },
-      'q2_1_1': {
-        text: 'What curiosity drove you?',
-        answers: ['Partner’s invitation', 'Peer influence', 'Media curiosity', 'School rumors', 'Personal exploration']
+      'q2_14_17_1': {
+        text: 'Did the age gap feel significant?',
+        answers: ['Very', 'Somewhat', 'Minor', 'Not at all', 'Unsure']
       },
-      'q2_1_2': {
-        text: 'Who pressured you the most?',
-        answers: ['Friend', 'Partner', 'Peers', 'Family context', 'Self-pressure']
+      'q2_14_17_2': {
+        text: 'Did crush dynamics affect consent?',
+        answers: ['Yes', 'No', 'Mixed', 'Unsure', 'Other']
       },
-      'q2_1_3': {
-        text: 'Why were you indifferent?',
-        answers: ['Too young to care', 'Distracted', 'Misunderstood', 'Numbness', 'Other reasons']
+      'q2_14_17_3': {
+        text: 'Was it purely casual or did feelings linger?',
+        answers: ['Purely casual', 'Some emotion', 'Lingering feelings', 'Regret', 'Other']
       },
-      'q2_1_4': {
-        text: 'What caused the shame afterward?',
-        answers: ['Guilt', 'Cultural norms', 'Personal values', 'Judgment', 'Other reasons']
+      'q2_14_17_4': {
+        text: 'How safe did you feel with a stranger?',
+        answers: ['Very safe', 'Somewhat safe', 'Unsafe', 'Fearful', 'Other']
       },
-      // q2_2 responses
-      'q2_2_0': {
-        text: 'How did it feel with a close friend?',
-        answers: ['Comforting', 'Awkward', 'Exciting', 'Complicated', 'Regretful']
+      'q2_18_21_0': {
+        text: 'What planning went into it?',
+        answers: ['Talked a lot', 'Some planning', 'Minimal', 'Spur-of-moment', 'Other']
       },
-      'q2_2_1': {
-        text: 'What was the age difference?',
-        answers: ['1–2 years', '3–5 years', '5–10 years', 'More than 10', 'Not sure']
+      'q2_18_21_1': {
+        text: 'Why mostly planned?',
+        answers: ['Comfort', 'Desire', 'Respect', 'Other', 'Not sure']
       },
-      'q2_2_2': {
-        text: 'Did you trust your crush?',
-        answers: ['Completely', 'Partially', 'Not at all', 'Unsure', 'Other']
+      'q2_18_21_2': {
+        text: 'What sparked spontaneity?',
+        answers: ['Passion', 'Opportunity', 'Alcohol', 'Peer influence', 'Other']
       },
-      'q2_2_3': {
-        text: 'Was it a casual fling or deeper?',
-        answers: ['Casual', 'Some emotion', 'Deep feeling', 'Confusing', 'Other']
-      },
-      'q2_2_4': {
-        text: 'How did meeting a stranger impact you?',
-        answers: ['Thrilling', 'Unsafe', 'Regrettable', 'Neutral', 'Other']
-      },
-      // q2_3 responses
-      'q2_3_0': {
-        text: 'What made you plan it meticulously?',
-        answers: ['Desire', 'Love', 'Curiosity', 'Advice', 'Other']
-      },
-      'q2_3_1': {
-        text: 'How did the discussion beforehand go?',
-        answers: ['Open', 'Nervous', 'Casual', 'Forced', 'No discussion']
-      },
-      'q2_3_2': {
-        text: 'What sparked the spontaneity?',
-        answers: ['Alcohol', 'Emotions', 'Moment’s heat', 'Opportunity', 'Other']
-      },
-      'q2_3_3': {
+      'q2_18_21_3': {
         text: 'Describe that chance encounter:',
-        answers: ['Random', 'Planned by fate', 'Influenced by friends', 'Unexpected', 'Other']
+        answers: ['Unexpected', 'Exciting', 'Awkward', 'Regrettable', 'Other']
       },
-      'q2_3_4': {
-        text: 'Why don’t you recall details?',
-        answers: ['Nervousness', 'Alcohol', 'Trauma', 'Privacy', 'Other']
+      'q2_18_21_4': {
+        text: 'Why recall is hazy?',
+        answers: ['Nervousness', 'Substance', 'Time lapse', 'Privacy', 'Other']
       },
-      // q2_4 responses
-      'q2_4_0': {
-        text: 'What deepened trust?',
-        answers: ['Emotion', 'Communication', 'Intimacy', 'Shared moment', 'Other']
+      'q2_22_25_0': {
+        text: 'Which trust deepened most?',
+        answers: ['Emotional', 'Physical', 'Mental', 'Spiritual', 'Other']
       },
-      'q2_4_1': {
-        text: 'What doubts arose?',
-        answers: ['Compatibility', 'Emotional disconnect', 'Timing', 'Other', 'None']
+      'q2_22_25_1': {
+        text: 'What doubts emerged?',
+        answers: ['Compatibility', 'Timing', 'Feelings', 'Values', 'Other']
       },
-      'q2_4_2': {
-        text: 'Was it purely physical?',
-        answers: ['Yes', 'Mostly', 'Some emotion', 'Neutral', 'Other']
+      'q2_22_25_2': {
+        text: 'How physical was the experience?',
+        answers: ['Highly physical', 'Mostly', 'Balanced', 'Minimal', 'Other']
       },
-      'q2_4_3': {
-        text: 'What lesson was eye-opening?',
-        answers: ['Self-awareness', 'Partner insight', 'Communication', 'Consent importance', 'Other']
+      'q2_22_25_3': {
+        text: 'What was eye-opening?',
+        answers: ['Self-awareness', 'Partner insight', 'Communication', 'Consent', 'Other']
       },
-      'q2_4_4': {
-        text: 'Why no change?',
-        answers: ['Already knew', 'Indifferent', 'Other priorities', 'Other', 'None']
+      'q2_22_25_4': {
+        text: 'Why no change in views?',
+        answers: ['Already open', 'Unmoved', 'Other priorities', 'Other', 'None']
       },
-      // q2_5 responses
-      'q2_5_0': {
-        text: 'What kept you waiting for love?',
-        answers: ['High standards', 'Past heartbreak', 'Waiting soulmate', 'Other', 'None']
+      'q2_above25_0': {
+        text: 'What curiosity drove you?',
+        answers: ['Personal', 'Peer stories', 'Media', 'Partner interest', 'Other']
       },
-      'q2_5_1': {
-        text: 'Which personal goal dominated?',
-        answers: ['Career', 'Education', 'Travel', 'Self-growth', 'Other']
+      'q2_above25_1': {
+        text: 'Was love the primary motivator?',
+        answers: ['Yes', 'Somewhat', 'No', 'Mixed', 'Other']
       },
-      'q2_5_2': {
+      'q2_above25_2': {
+        text: 'Did career focus delay you?',
+        answers: ['Yes', 'No', 'Partially', 'Unsure', 'Other']
+      },
+      'q2_above25_3': {
         text: 'Which cultural reason applied?',
         answers: ['Family values', 'Religion', 'Tradition', 'Other', 'None']
       },
-      'q2_5_3': {
-        text: 'What fear held you back?',
-        answers: ['Fear of intimacy', 'Fear of pain', 'Fear of rejection', 'Other', 'None']
-      },
-      'q2_5_4': {
-        text: 'Please specify your reason:',
-        answers: ['Nervousness', 'Privacy', 'Personal belief', 'Other', 'Prefer not to say']
+      'q2_above25_4': {
+        text: 'Please specify other reasons:',
+        answers: ['Personal choice', 'Privacy', 'Waiting for right', 'Other', 'Prefer not to say']
       }
     };
 
@@ -158,17 +173,17 @@
       if (state.stage === 'q1') return renderQ1();
       if (state.stage === 'q2') return renderQ2();
       if (state.stage === 'q3') return renderQ3();
-      container.innerHTML = `<div class="question">Thank you for your honesty, Emilyanes’a 💋</div>`;
+      container.innerHTML = `<div class="question">Thank you for your honesty ❤️</div>`;
     }
 
     function renderQ1() {
       container.innerHTML = `
-        <div class="question">At what age did you first have sex?</div>
+        <div class="question">Select your age when you first had sex:</div>
         <div class="input-block">
-          <input type="range" id="age-slider" min="10" max="60" value="18" oninput="updateAge(this.value)">
+          <input type="range" id="age-slider" min="14" max="60" value="18" oninput="updateAge(this.value)">
           <div class="range-label" id="range-label">18 years</div>
         </div>
-        <button class="answer-btn" onclick="submitAge()">Submit Age</button>
+        <button class="answer-btn" onclick="submitAge()">Continue</button>
       `;
     }
 
@@ -179,11 +194,11 @@
 
     function submitAge() {
       const age = state.age;
-      if (age < 14) state.branch = 'q2_1';
-      else if (age <= 17) state.branch = 'q2_2';
-      else if (age <= 21) state.branch = 'q2_3';
-      else if (age <= 25) state.branch = 'q2_4';
-      else state.branch = 'q2_5';
+      if (age < 14) return; // slider prevents
+      if (age <= 17) state.branch = 'q2_14_17';
+      else if (age <= 21) state.branch = 'q2_18_21';
+      else if (age <= 25) state.branch = 'q2_22_25';
+      else state.branch = 'q2_above25';
       state.stage = 'q2';
       render();
     }
@@ -210,17 +225,16 @@
       container.innerHTML = `
         <div class="question">${entry.text}</div>
         <div class="answers">
-          ${entry.answers.map((a,i) => `<button class="answer-btn" onclick="finish(${i})">${a}</button>`).join('')}
+          ${entry.answers.map((a,i) => `<button class="answer-btn" onclick="finish()">${a}</button>`).join('')}
         </div>
       `;
     }
 
-    function finish(idx) {
+    function finish() {
       state.stage = 'end';
       render();
     }
 
-    // Start quiz
     render();
   </script>
 </body>
