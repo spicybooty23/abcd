@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Spicy Questionnaire</title>
+  <title>First Time – Year Selector</title>
   <style>
     body {
       background: radial-gradient(circle at top left, #2c001e, #000);
@@ -19,135 +19,111 @@
 
     .container {
       width: 90%;
-      max-width: 550px;
+      max-width: 600px;
       padding: 2rem;
       background: rgba(27, 27, 27, 0.95);
       border-radius: 25px;
       box-shadow: 0 0 35px #ff1493aa;
-      animation: fadeIn 2s ease-out;
       backdrop-filter: blur(6px);
     }
 
     .question {
       margin-bottom: 2rem;
-      font-size: 1.5rem;
-      line-height: 1.6;
-      animation: typewriter 2s steps(40) 1 normal both;
-      white-space: nowrap;
-      overflow: hidden;
-      border-right: 2px solid #ff69b4;
+      font-size: 1.4rem;
+      animation: fadeIn 1s ease-out;
     }
 
-    .answers {
-      display: flex;
-      flex-direction: column;
-      gap: 1.2rem;
+    .input-block {
+      margin-bottom: 1.5rem;
     }
 
-    .answer-btn {
-      background: linear-gradient(to right, #ff0066, #ff3399);
-      border: none;
-      padding: 0.9rem 1.4rem;
+    select, button {
+      width: 100%;
+      padding: 0.9rem 1rem;
       font-size: 1rem;
-      border-radius: 12px;
-      cursor: pointer;
+      border-radius: 10px;
+      border: none;
+      outline: none;
       color: white;
+      background: #ff3399;
       box-shadow: 0 0 10px #ff3399aa;
-      transition: transform 0.2s, box-shadow 0.3s;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
 
-    .answer-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 18px #ff66cc;
+    select:hover, button:hover {
+      background: #ff66cc;
+      box-shadow: 0 0 15px #ff66cc;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(40px); }
+      from { opacity: 0; transform: translateY(30px); }
       to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes typewriter {
-      from { width: 0 }
-      to { width: 100% }
     }
   </style>
 </head>
 <body>
   <div class="container" id="quiz-container">
-    <!-- JS will insert questions here -->
+    <div class="question">What year did you first have sex?</div>
+    <div class="input-block">
+      <select id="year-select">
+        <option value="">Select a year...</option>
+      </select>
+    </div>
+    <button onclick="submitYear()">Continue</button>
   </div>
 
   <script>
-    const questions = [
-      {
-        id: 1,
-        text: "When did you first have sex, and how would you describe the circumstances?",
-        answers: [
-          { text: "Very young, and it was impulsive", followUp: 2 },
-          { text: "Around 16, with someone older", followUp: 2 },
-          { text: "After 18, and it was planned", followUp: 2 },
-          { text: "Still waiting for the right moment", followUp: 3 }
-        ]
-      },
-      {
-        id: 2,
-        text: "Was it consensual and enjoyable?",
-        answers: [
-          { text: "Yes, and I felt powerful", followUp: 4 },
-          { text: "It was confusing and fast", followUp: 4 },
-          { text: "No, and I have mixed feelings", followUp: 4 },
-          { text: "Yes, but I wanted more", followUp: 4 }
-        ]
-      },
-      {
-        id: 3,
-        text: "What’s holding you back from doing it?",
-        answers: [
-          { text: "Religious values", followUp: 4 },
-          { text: "Haven’t met the right one", followUp: 4 },
-          { text: "Fear or trauma", followUp: 4 },
-          { text: "Still exploring myself", followUp: 4 }
-        ]
-      },
-      {
-        id: 4,
-        text: "Would you like to explore something new now?",
-        answers: [
-          { text: "Yes, something darker 🔥", followUp: null },
-          { text: "Yes, but slow and sensual 💫", followUp: null },
-          { text: "I want to be guided…", followUp: null },
-          { text: "Not yet, but I’m curious 👀", followUp: null }
-        ]
+    const startYear = 1980;
+    const currentYear = new Date().getFullYear();
+    const select = document.getElementById('year-select');
+
+    // Populate dropdown with years
+    for (let y = currentYear; y >= startYear; y--) {
+      const option = document.createElement("option");
+      option.value = y;
+      option.text = y;
+      select.add(option);
+    }
+
+    function submitYear() {
+      const year = parseInt(select.value);
+      const age = currentYear - year;
+
+      if (!year) {
+        alert("Please select a year");
+        return;
       }
-    ];
 
-    let currentQuestion = 1;
+      let followUpText = "";
 
-    function renderQuestion(id) {
-      const container = document.getElementById('quiz-container');
-      const q = questions.find(q => q.id === id);
+      if (age > 40) {
+        followUpText = "Was it unusual in your generation to start that early?";
+      } else if (age > 30) {
+        followUpText = "Was it common among your friends back then?";
+      } else if (age >= 25) {
+        followUpText = "Do you remember if it was emotional or just physical?";
+      } else if (age >= 18) {
+        followUpText = "Was it with someone you trusted deeply?";
+      } else if (age >= 14) {
+        followUpText = "Did you feel prepared for it at that age?";
+      } else {
+        followUpText = "Were you pressured, or did you choose it freely?";
+      }
 
-      container.innerHTML = `
-        <div class="question">${q.text}</div>
-        <div class="answers">
-          ${q.answers.map(a =>
-            `<button class="answer-btn" onclick="handleAnswer(${a.followUp})">${a.text}</button>`
-          ).join('')}
+      document.getElementById('quiz-container').innerHTML = `
+        <div class="question">${followUpText}</div>
+        <div class="input-block">
+          <button onclick="thankYou()">Answer privately and continue...</button>
         </div>
       `;
     }
 
-    function handleAnswer(followUp) {
-      if (followUp) {
-        renderQuestion(followUp);
-      } else {
-        document.getElementById('quiz-container').innerHTML = `
-          <div class="question">Thank you, beautiful. More to come soon... 💋</div>
-        `;
-      }
+    function thankYou() {
+      document.getElementById('quiz-container').innerHTML = `
+        <div class="question">Thank you for your honesty, Emilyanes’a 💋</div>
+      `;
     }
-
-    renderQuestion(currentQuestion);
   </script>
 </body>
 </html>
