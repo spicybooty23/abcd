@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Legal Age: Spicy Confession</title>
+  <title>Spicy Questionnaire</title>
   <style>
     body {
       background: radial-gradient(circle at top left, #2c001e, #000);
@@ -26,27 +26,28 @@
       overflow-y: auto;
       max-height: 95vh;
     }
-    .question {
-      margin-bottom: 1.5rem;
-      font-size: 1.4rem;
+    form p, form label {
+      margin: 1rem 0 0.5rem;
+      font-size: 1.1rem;
     }
-    .answers, .input-block {
+    form input[type=range], form select, form button {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    .answers label, .input-block {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-    }
-    button, input[type=range] {
-      font-size: 1rem;
-      border-radius: 12px;
-      border: none;
-      padding: 0.9rem;
+      gap: 0.5rem;
     }
     .answer-btn {
       background: linear-gradient(to right, #ff0066, #ff3399);
       color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 0.8rem;
       cursor: pointer;
       box-shadow: 0 0 10px #ff3399aa;
-      transition: transform 0.3s, box-shadow 0.3s;
+      transition: transform 0.2s, box-shadow 0.3s;
     }
     .answer-btn:hover {
       transform: scale(1.05);
@@ -54,188 +55,136 @@
     }
     .range-label {
       text-align: center;
-      font-size: 1.2rem;
+      font-size: 1rem;
       color: #ff66cc;
+      margin-top: -0.5rem;
+      margin-bottom: 1rem;
     }
+    .hidden { display: none; }
   </style>
 </head>
 <body>
-  <div class="container" id="quiz-container"></div>
+  <div class="container">
+    <form id="spicy-form">
+      <!-- 1. Age at first intercourse -->
+      <p>At what age did you first have sexual intercourse?</p>
+      <div class="input-block">
+        <input type="range" id="ageFirst" name="ageFirst" min="14" max="60" value="18"
+               oninput="ageFirstLabel.textContent = this.value + ' years'">
+        <span id="ageFirstLabel" class="range-label">18 years</span>
+      </div>
+
+      <!-- 2. Partner’s age -->
+      <p>How old was your partner at that time?</p>
+      <div class="input-block">
+        <input type="range" id="agePartner" name="agePartner" min="14" max="60" value="18"
+               oninput="agePartnerLabel.textContent = this.value + ' years'">
+        <span id="agePartnerLabel" class="range-label">18 years</span>
+      </div>
+
+      <!-- 3. Relationship -->
+      <p>What was your relationship to that person?</p>
+      <select id="relation" name="relation">
+        <option>Close friend</option>
+        <option>Older partner</option>
+        <option>Crush</option>
+        <option>Casual fling</option>
+        <option>Stranger</option>
+      </select>
+
+      <!-- 4. Romantic relationship? -->
+      <p>Were you in a romantic relationship with them?</p>
+      <div class="answers">
+        <label><input type="radio" name="inRelation" value="yes"> Yes</label>
+        <label><input type="radio" name="inRelation" value="no"> No</label>
+      </div>
+
+      <!-- 5. Time from decision to act -->
+      <p>How much time passed between deciding and intercourse?</p>
+      <div class="input-block">
+        <input type="range" id="timeToAct" name="timeToAct" min="0" max="720" value="24"
+               oninput="timeToActLabel.textContent = this.value + ' hours'">
+        <span id="timeToActLabel" class="range-label">24 hours</span>
+      </div>
+
+      <!-- 6. Choice vs pressure -->
+      <p>Was it entirely your choice, pressured, or both?</p>
+      <select id="pressure" name="pressure">
+        <option>Entirely my choice</option>
+        <option>Some pressure</option>
+        <option>Mixed</option>
+      </select>
+
+      <!-- 7. Satisfied? -->
+      <p>Did you find the experience satisfying?</p>
+      <div class="answers">
+        <label><input type="radio" name="satisfied" value="yes" onchange="toggle7_1()"> Yes</label>
+        <label><input type="radio" name="satisfied" value="no" onchange="toggle7_1()"> No</label>
+      </div>
+
+      <!-- 7.1 If No: factors -->
+      <div id="q7_1" class="hidden">
+        <p>If no, what caused dissatisfaction? (select all that apply)</p>
+        <label><input type="checkbox" name="cause" value="technique"> Technique</label>
+        <label><input type="checkbox" name="cause" value="size" onchange="toggleSize()"> Size</label>
+        <label><input type="checkbox" name="cause" value="noRomance"> No romantic connection</label>
+        <label><input type="checkbox" name="cause" value="other"> Other</label>
+
+        <!-- 7.1.1 If Size: size slider -->
+        <div id="sizeScale" class="hidden" style="margin-left:1rem;">
+          <p>Rate size</p>
+          <input type="range" id="sizeRating" name="sizeRating" min="1" max="10" value="5"
+                 oninput="sizeLabel.textContent = this.value">
+          <span id="sizeLabel" class="range-label">5</span>
+        </div>
+      </div>
+
+      <!-- 8. Mutual satisfaction? -->
+      <p>Was it satisfying for both partners?</p>
+      <div class="answers">
+        <label><input type="radio" name="mutual" value="yes" onchange="toggle8_1()"> Yes</label>
+        <label><input type="radio" name="mutual" value="no" onchange="toggle8_1()"> No</label>
+      </div>
+
+      <!-- 8.1 If No: partner’s issue -->
+      <div id="q8_1" class="hidden">
+        <p>If no, what was the partner’s issue? (select all that apply)</p>
+        <label><input type="checkbox" name="partnerCause" value="technique"> Your technique</label>
+        <label><input type="checkbox" name="partnerCause" value="body" onchange="toggleBodyPart()"> Their body</label>
+        <label><input type="checkbox" name="partnerCause" value="other"> Other</label>
+
+        <!-- 8.1.1 If Body: body part multi-select -->
+        <div id="bodyPart" class="hidden" style="margin-left:1rem;">
+          <p>Which body part?</p>
+          <label><input type="checkbox" name="bodyPart" value="breasts"> Breasts</label>
+          <label><input type="checkbox" name="bodyPart" value="buttocks"> Buttocks</label>
+          <label><input type="checkbox" name="bodyPart" value="legs"> Legs</label>
+          <label><input type="checkbox" name="bodyPart" value="face"> Face</label>
+          <label><input type="checkbox" name="bodyPart" value="other"> Other</label>
+        </div>
+      </div>
+
+      <button type="submit" class="answer-btn">Submit</button>
+    </form>
+  </div>
+
   <script>
-    const state = { stage: 'q1', age: 18, branch: null, choiceIndex: null };
-    const container = document.getElementById('quiz-container');
-
-    // Q2 categories for legal age (>14)
-    const q2Data = {
-      q2_14_17: {
-        text: 'Ages 14–17: Who was your first partner?',
-        answers: ['Close friend', 'Older partner', 'New crush', 'Casual fling', 'Stranger']
-      },
-      q2_18_21: {
-        text: 'Ages 18–21: Was it planned or spontaneous?',
-        answers: ['Fully planned', 'Mostly planned', 'Spontaneous', 'Chance encounter', 'Don’t recall']
-      },
-      q2_22_25: {
-        text: 'Ages 22–25: How did it shape your intimacy views?',
-        answers: ['Deepened trust', 'Raised doubts', 'Mostly physical', 'Eye-opener', 'No change']
-      },
-      q2_above25: {
-        text: 'Above 25: What motivated the timing?',
-        answers: ['Curiosity', 'Love', 'Career focus', 'Cultural reasons', 'Other']
-      }
-    };
-
-    // Q3 follow-ups for each branch answer index
-    const q3Data = {
-      'q2_14_17_0': {
-        text: 'With a close friend, did boundaries feel clear?',
-        answers: ['Yes, clear', 'Some confusion', 'Blurred lines', 'Complicated', 'Other']
-      },
-      'q2_14_17_1': {
-        text: 'Did the age gap feel significant?',
-        answers: ['Very', 'Somewhat', 'Minor', 'Not at all', 'Unsure']
-      },
-      'q2_14_17_2': {
-        text: 'Did crush dynamics affect consent?',
-        answers: ['Yes', 'No', 'Mixed', 'Unsure', 'Other']
-      },
-      'q2_14_17_3': {
-        text: 'Was it purely casual or did feelings linger?',
-        answers: ['Purely casual', 'Some emotion', 'Lingering feelings', 'Regret', 'Other']
-      },
-      'q2_14_17_4': {
-        text: 'How safe did you feel with a stranger?',
-        answers: ['Very safe', 'Somewhat safe', 'Unsafe', 'Fearful', 'Other']
-      },
-      'q2_18_21_0': {
-        text: 'What planning went into it?',
-        answers: ['Talked a lot', 'Some planning', 'Minimal', 'Spur-of-moment', 'Other']
-      },
-      'q2_18_21_1': {
-        text: 'Why mostly planned?',
-        answers: ['Comfort', 'Desire', 'Respect', 'Other', 'Not sure']
-      },
-      'q2_18_21_2': {
-        text: 'What sparked spontaneity?',
-        answers: ['Passion', 'Opportunity', 'Alcohol', 'Peer influence', 'Other']
-      },
-      'q2_18_21_3': {
-        text: 'Describe that chance encounter:',
-        answers: ['Unexpected', 'Exciting', 'Awkward', 'Regrettable', 'Other']
-      },
-      'q2_18_21_4': {
-        text: 'Why recall is hazy?',
-        answers: ['Nervousness', 'Substance', 'Time lapse', 'Privacy', 'Other']
-      },
-      'q2_22_25_0': {
-        text: 'Which trust deepened most?',
-        answers: ['Emotional', 'Physical', 'Mental', 'Spiritual', 'Other']
-      },
-      'q2_22_25_1': {
-        text: 'What doubts emerged?',
-        answers: ['Compatibility', 'Timing', 'Feelings', 'Values', 'Other']
-      },
-      'q2_22_25_2': {
-        text: 'How physical was the experience?',
-        answers: ['Highly physical', 'Mostly', 'Balanced', 'Minimal', 'Other']
-      },
-      'q2_22_25_3': {
-        text: 'What was eye-opening?',
-        answers: ['Self-awareness', 'Partner insight', 'Communication', 'Consent', 'Other']
-      },
-      'q2_22_25_4': {
-        text: 'Why no change in views?',
-        answers: ['Already open', 'Unmoved', 'Other priorities', 'Other', 'None']
-      },
-      'q2_above25_0': {
-        text: 'What curiosity drove you?',
-        answers: ['Personal', 'Peer stories', 'Media', 'Partner interest', 'Other']
-      },
-      'q2_above25_1': {
-        text: 'Was love the primary motivator?',
-        answers: ['Yes', 'Somewhat', 'No', 'Mixed', 'Other']
-      },
-      'q2_above25_2': {
-        text: 'Did career focus delay you?',
-        answers: ['Yes', 'No', 'Partially', 'Unsure', 'Other']
-      },
-      'q2_above25_3': {
-        text: 'Which cultural reason applied?',
-        answers: ['Family values', 'Religion', 'Tradition', 'Other', 'None']
-      },
-      'q2_above25_4': {
-        text: 'Please specify other reasons:',
-        answers: ['Personal choice', 'Privacy', 'Waiting for right', 'Other', 'Prefer not to say']
-      }
-    };
-
-    function render() {
-      if (state.stage === 'q1') return renderQ1();
-      if (state.stage === 'q2') return renderQ2();
-      if (state.stage === 'q3') return renderQ3();
-      container.innerHTML = `<div class="question">Thank you for your honesty ❤️</div>`;
+    function toggle7_1() {
+      const no = document.querySelector('input[name="satisfied"][value="no"]').checked;
+      document.getElementById('q7_1').className = no ? '' : 'hidden';
     }
-
-    function renderQ1() {
-      container.innerHTML = `
-        <div class="question">Select your age when you first had sex:</div>
-        <div class="input-block">
-          <input type="range" id="age-slider" min="14" max="60" value="18" oninput="updateAge(this.value)">
-          <div class="range-label" id="range-label">18 years</div>
-        </div>
-        <button class="answer-btn" onclick="submitAge()">Continue</button>
-      `;
+    function toggleSize() {
+      const checked = document.querySelector('input[name="cause"][value="size"]').checked;
+      document.getElementById('sizeScale').className = checked ? '' : 'hidden';
     }
-
-    function updateAge(val) {
-      state.age = parseInt(val);
-      document.getElementById('range-label').innerText = val + ' years';
+    function toggle8_1() {
+      const no = document.querySelector('input[name="mutual"][value="no"]').checked;
+      document.getElementById('q8_1').className = no ? '' : 'hidden';
     }
-
-    function submitAge() {
-      const age = state.age;
-      if (age < 14) return; // slider prevents
-      if (age <= 17) state.branch = 'q2_14_17';
-      else if (age <= 21) state.branch = 'q2_18_21';
-      else if (age <= 25) state.branch = 'q2_22_25';
-      else state.branch = 'q2_above25';
-      state.stage = 'q2';
-      render();
+    function toggleBodyPart() {
+      const checked = document.querySelector('input[name="partnerCause"][value="body"]').checked;
+      document.getElementById('bodyPart').className = checked ? '' : 'hidden';
     }
-
-    function renderQ2() {
-      const q = q2Data[state.branch];
-      container.innerHTML = `
-        <div class="question">${q.text}</div>
-        <div class="answers">
-          ${q.answers.map((a,i) => `<button class="answer-btn" onclick="pickQ2(${i})">${a}</button>`).join('')}
-        </div>
-      `;
-    }
-
-    function pickQ2(idx) {
-      state.choiceIndex = idx;
-      state.stage = 'q3';
-      render();
-    }
-
-    function renderQ3() {
-      const key = `${state.branch}_${state.choiceIndex}`;
-      const entry = q3Data[key];
-      container.innerHTML = `
-        <div class="question">${entry.text}</div>
-        <div class="answers">
-          ${entry.answers.map((a,i) => `<button class="answer-btn" onclick="finish()">${a}</button>`).join('')}
-        </div>
-      `;
-    }
-
-    function finish() {
-      state.stage = 'end';
-      render();
-    }
-
-    render();
   </script>
 </body>
 </html>
